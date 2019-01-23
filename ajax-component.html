@@ -1,0 +1,35 @@
+<!-- Sample from https://github.com/vuejs/vue/issues/679#issuecomment-70354185 -->
+<div v-component="{{currentView}}"></div>
+
+<script type="text/javascript">
+//Create the 'default' component
+Vue.component("default", {
+    template: '<div>This should be replaced (and will be in 2 seconds)</div>'
+});
+
+//Create the parent ViewModel
+var vm = new Vue({
+    el: "body",
+    data: {
+        currentView: "default"
+    }
+});
+
+//Pretend to load the data from the server
+//This would actually be $.get("/url", data, function(){...});
+window.setTimeout(function () {
+
+    //Create the new component using the template we received
+    Vue.component("BoardFeed", {
+        template: '<div>Template returned from server, what I really want</div><br>And directives work too:<div v-repeat="items">{{$value}}</div>',
+        data: function () {
+            return {
+                items: [1, 2, 3]
+            };
+        }
+    });
+
+    //And then change the page to that component
+    vm.currentView = "BoardFeed";
+}, 2000);
+</script>
