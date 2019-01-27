@@ -1,35 +1,89 @@
-<!-- Sample from https://github.com/vuejs/vue/issues/679#issuecomment-70354185 -->
-<div v-component="{{currentView}}"></div>
+<!-- Based on the sample from https://github.com/vuejs/vue/issues/679#issuecomment-70354185 -->
+<!doctype html>
+<html lang="en">
 
-<script type="text/javascript">
-//Create the 'default' component
-Vue.component("default", {
-    template: '<div>This should be replaced (and will be in 2 seconds)</div>'
-});
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-//Create the parent ViewModel
-var vm = new Vue({
-    el: "body",
-    data: {
-        currentView: "default"
-    }
-});
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
 
-//Pretend to load the data from the server
-//This would actually be $.get("/url", data, function(){...});
-window.setTimeout(function () {
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    //Create the new component using the template we received
-    Vue.component("BoardFeed", {
-        template: '<div>Template returned from server, what I really want</div><br>And directives work too:<div v-repeat="items">{{$value}}</div>',
-        data: function () {
-            return {
-                items: [1, 2, 3]
-            };
-        }
-    });
+    <title>VueJs dynamic templates</title>
+</head>
 
-    //And then change the page to that component
-    vm.currentView = "BoardFeed";
-}, 2000);
-</script>
+<body>
+    <div id="app">
+        <!-- VueJs will dynamically render the component defined in mycomp variable -->
+        <component :is="mycomp"></component>
+    </div>
+
+    <script type="text/javascript">
+        //Create the 'Loading' component displayed until the BoardFeed is loaded via ajax
+        Vue.component("Loading", {
+            template: '<div>This should be replaced (and will be in 2 seconds)</div>'
+        });
+
+        //Create the parent ViewModel
+        var vuejs = new Vue({
+            el: "#app",
+            data: {
+                // this variable defines which component shall be rendered
+                mycomp: "Loading"
+            },
+            beforeCreate: function () {
+                var vm = this;
+                console.log("mounted...");
+                axios.get('http://localhost/vuejs/ajax-dom-for-vue-template.html')
+                    .then(function (response) {
+
+                        //Create the new component using the template we received via ajax
+                        Vue.component("BoardFeed", {
+                            // set the components template to received contents from ajax call
+                            template: response.data,
+                            data: function () {
+                                return {
+                                    title: 'Hello Vue!',
+                                    todos: [
+                                        "Cras justo odio",
+                                        "Dapibus ac facilisis in",
+                                        "Morbi leo risus",
+                                        "Porta ac consectetur a"
+                                    ]
+                                };
+                            }
+
+                        });
+                        console.log("registered new component");
+                        // tell VueJs to render just loaded BoardFeed component instead of Loading one
+                        vuejs.mycomp = "BoardFeed";
+                        // There is no need to force update because we changed the data
+                        //vuejs.$forceUpdate();
+                    });
+
+
+
+            },
+
+        });
+
+
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

@@ -16,11 +16,11 @@
   </head>
   <body>
     
-    <div id="app" class="container">Loading...</div>
+    <div id="app">Loading...</div>
 
     <script type="text/javascript">
     var app;
-    axios.get('http://localhost/vuejs/left.html')
+    axios.get('http://localhost/vuejs/ajax-dom-for-vue-template.html')
         .then(function(response){
           document.getElementById('app').innerHTML = response.data;
           app = new Vue({
