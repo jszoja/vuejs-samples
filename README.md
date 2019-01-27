@@ -6,4 +6,7 @@ Shows how to load vue components template via Ajax from within the vue instance(
 ### ajax-dom-for-vue.html
 Shows how to load html(vue template) via Ajax to DOM first and parse it with vue afterwards.
 
+### vue-resource-sample.html
+Sample with vue-resource plugin
+
 
