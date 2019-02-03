@@ -9,4 +9,10 @@ Shows how to load html(vue template) via Ajax to DOM first and parse it with vue
 ### vue-resource-sample.html
 Sample with vue-resource plugin
 
+### ajax-mount.html
+Shortest implementation:
+* uses only one instance of VueJs
+* template is loaded via AJAX
+* parsed template is mounted to the DOM
+
 
